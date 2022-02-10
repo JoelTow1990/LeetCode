@@ -20,8 +20,40 @@ Constraints:
 1 <= nums.length <= 104
 -104 <= nums[i] <= 104
 nums is sorted in non-decreasing order.
+
+Follow up: Squaring each element and sorting the new array is very trivial, could you find an O(n) solution using a different approach?
 """
 
+# Simple O(nlog(n)) implementation.
 class Solution:
     def sortedSquares(self, nums: List[int]) -> List[int]:
         return [i**2 for i in sorted(nums, key=lambda n: -n if n < 0 else n)]
+
+# Follow up O(n) implementation.
+class Solution:
+    def sortedSquares(self, nums: List[int]) -> List[int]:
+        neg = []
+        pos = []
+        res = []
+        for i in range(len(nums)):
+            if nums[i] < 0:
+                neg.insert(0, nums[i]**2)
+            else:
+                pos = [j**2 for j in nums[i:]]
+                break
+        if len(neg) == 0:
+            return pos
+        else:
+            i = j = 0
+            while i < len(neg) and j < len(pos):
+                if neg[i] <= pos[j]:
+                    res.append(neg[i])
+                    i += 1
+                else:
+                    res.append(pos[j])
+                    j += 1
+            if i == len(neg):
+                res.extend(pos[j:])
+            else:
+                res.extend(neg[i:])
+        return res
